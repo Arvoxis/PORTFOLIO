@@ -127,7 +127,7 @@ class RadarViz {
   _resize() {
     const rect = this.container.getBoundingClientRect()
     this.width = Math.max(280, rect.width)
-    this.height = Math.max(360, rect.height)
+    this.height = Math.max(280, rect.height)
     this.canvas.width = Math.round(this.width * this.dpr)
     this.canvas.height = Math.round(this.height * this.dpr)
     this.canvas.style.width = `${this.width}px`
@@ -150,6 +150,8 @@ class RadarViz {
       blip.y = this.cy - this.outerR * blip.dist * Math.cos(rad)
     }
   }
+
+  get _isMobile() { return this.width <= 300 }
 
   _buildStaticCanvas() {
     const c = document.createElement('canvas')
@@ -192,14 +194,15 @@ class RadarViz {
     sctx.arc(cx, cy, 3, 0, Math.PI * 2)
     sctx.fill()
 
-    // Corner brackets (L-shapes, 14px)
+    // Corner brackets (L-shapes)
+    const bracketLen = this._isMobile ? 10 : 14
     sctx.strokeStyle = 'rgba(110, 231, 183, 0.15)'
     sctx.lineWidth = 1
     const br = (x, y, dx, dy) => {
       sctx.beginPath()
-      sctx.moveTo(x, y + dy * 14)
+      sctx.moveTo(x, y + dy * bracketLen)
       sctx.lineTo(x, y)
-      sctx.lineTo(x + dx * 14, y)
+      sctx.lineTo(x + dx * bracketLen, y)
       sctx.stroke()
     }
     br(0.5, 0.5, 1, 1)
@@ -207,14 +210,16 @@ class RadarViz {
     br(0.5, h - 0.5, 1, -1)
     br(w - 0.5, h - 0.5, -1, -1)
 
-    // Static HUD top-left
-    sctx.fillStyle = 'rgba(100, 116, 139, 0.5)'
-    sctx.font = HUD_FONT
-    sctx.textAlign = 'left'
-    sctx.textBaseline = 'top'
-    sctx.fillText('SYSTEM  HAWK-I v2.1', 14, 14)
-    sctx.fillText('MODE    AREA SCAN', 14, 26)
-    sctx.fillText('STATUS  ACTIVE', 14, 38)
+    // Static HUD top-left (hidden on mobile — too cramped)
+    if (!this._isMobile) {
+      sctx.fillStyle = 'rgba(100, 116, 139, 0.5)'
+      sctx.font = HUD_FONT
+      sctx.textAlign = 'left'
+      sctx.textBaseline = 'top'
+      sctx.fillText('SYSTEM  HAWK-I v2.1', 14, 14)
+      sctx.fillText('MODE    AREA SCAN', 14, 26)
+      sctx.fillText('STATUS  ACTIVE', 14, 38)
+    }
 
     this.staticCanvas = c
   }
@@ -289,7 +294,7 @@ class RadarViz {
     }
 
     // Main sweep line
-    this._drawSweepLine(ctx, this.sweepAngle, 'rgba(110, 231, 183, 0.8)', 1.5)
+    this._drawSweepLine(ctx, this.sweepAngle, 'rgba(110, 231, 183, 0.8)', this._isMobile ? 1 : 1.5)
 
     // Blips
     for (const blip of this.blips) {
@@ -346,7 +351,7 @@ class RadarViz {
 
     // Label: angle 315°–135° (through 0°) → right; 135°–315° → left
     ctx.fillStyle = `rgba(110, 231, 183, ${0.7 * dotAlpha})`
-    ctx.font = HUD_FONT
+    ctx.font = this._isMobile ? '8px "JetBrains Mono", ui-monospace, monospace' : HUD_FONT
     ctx.textBaseline = 'middle'
     const onRight = blip.angle <= 135 || blip.angle >= 315
     if (onRight) {
@@ -359,6 +364,7 @@ class RadarViz {
   }
 
   _drawHUD(ctx, realNow) {
+    if (this._isMobile) return
     const hdg = Math.round(this.sweepAngle)
     const visible = this.blips.filter(b => b.pingAt !== null && realNow - b.pingAt <= 6600).length
 

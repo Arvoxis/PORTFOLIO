@@ -44,6 +44,7 @@ html {
   scroll-behavior: smooth;
   -webkit-text-size-adjust: 100%;
   scroll-padding-top: 80px;
+  overflow-x: hidden;
 }
 
 body {
@@ -153,7 +154,7 @@ main {
   width: 100%;
   max-width: var(--container);
   margin: 0 auto;
-  padding: 0 clamp(1.25rem, 4vw, 2.5rem);
+  padding: 0 clamp(1.5rem, 4vw, 2.5rem);
   position: relative;
 }
 
@@ -668,9 +669,27 @@ h4 {
       "name"
       "role"
       "bio"
-      "ctas";
+      "ctas"
+      "viz";
+    text-align: center;
+    justify-items: center;
   }
-  .hero-inner > .hero-viz { display: none; }
+  .hero-inner > .hero-bio {
+    text-align: left;
+    max-width: 100%;
+  }
+  .hero-inner > .hero-ctas {
+    justify-content: center;
+  }
+  .hero-inner > .hero-viz {
+    width: 280px;
+    height: 280px;
+    max-width: 100%;
+    justify-self: center;
+  }
+  .hero h1 {
+    font-size: clamp(2.5rem, 10vw, 5rem);
+  }
 }
 
 .hero-meta {
@@ -1926,6 +1945,9 @@ footer {
   .hamburger {
     display: grid;
   }
+  .section {
+    padding: clamp(3.5rem, 8vw, 5rem) 0;
+  }
   .projects-grid {
     grid-template-columns: 1fr;
   }
@@ -1941,10 +1963,15 @@ footer {
     padding-top: 0;
   }
   .section-head {
+    grid-template-columns: 1fr;
     align-items: flex-start;
   }
   .section-head .sub {
+    grid-column: 1;
     text-align: left;
+  }
+  .tech-strip {
+    overflow: hidden;
   }
   .ambient {
     opacity: 0.5;
@@ -1953,7 +1980,7 @@ footer {
 
 @media (max-width: 640px) {
   .stats-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: 1fr 1fr;
   }
   .hero-cursor {
     height: 0.75em;
