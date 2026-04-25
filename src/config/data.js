@@ -1,3 +1,4 @@
+
 // ============================================================
 // PERSONAL PORTFOLIO DATA
 // Single source of truth. Edit here to update the site.
@@ -22,6 +23,7 @@ export const personalInfo = {
   location: 'Vellore, India',
   status: 'Open to Internships',
   availability: 'Available for remote',
+};
 
 export const personal = {
   name: {
@@ -30,20 +32,19 @@ export const personal = {
   },
   role: 'Machine Learning & AI Developer',
   tagline: 'Machine Learning & AI Developer',
-  subTagline:
-    'B.Tech Computer Science · VIT Vellore · Class of 2028',
-  bio: "Computer Science undergraduate at VIT Vellore with experience in machine learning, NLP, and computer vision. Skilled in Python-based ML workflows using Scikit-learn, NumPy, and Pandas, with exposure to TensorFlow and Keras. Built projects including LLM-based semantic search, supervised ML models, and gesture recognition using OpenCV and MediaPipe. Vice Chairperson of the AI & ML Club, seeking an AI/ML internship.",
+  subTagline: 'B.Tech Computer Science · VIT Vellore · Class of 2028',
+  bio:
+    "Computer Science undergraduate at VIT Vellore with experience in machine learning, NLP, and computer vision. Skilled in Python-based ML workflows using Scikit-learn, NumPy, and Pandas, with exposure to TensorFlow and Keras. Built projects including LLM-based semantic search, supervised ML models, and gesture recognition using OpenCV and MediaPipe. Vice Chairperson of the AI & ML Club, seeking an AI/ML internship.",
   email: 'rakshitsinha1444@gmail.com',
   phone: '+91 9113865011',
   location: 'VIT Vellore, Tamil Nadu, India',
   resumeUrl: '#',
   socials: {
-    github: 'https://github.com',
+    github: 'https://github.com/Arvoxis',
     linkedin: 'https://www.linkedin.com/in/rakshit-sinha-vit/',
     twitter: null,
   },
-
-}
+};
 
 export const navLinks = [
   { label: 'Home', href: '#home' },
@@ -51,7 +52,7 @@ export const navLinks = [
   { label: 'Projects', href: '#projects' },
   { label: 'Writing', href: '#writing' },
   { label: 'Contact', href: '#contact' },
-]
+];
 
 export const stats = [
   {
@@ -78,7 +79,7 @@ export const stats = [
     note: 'Remote or on-site · SWE / ML',
     icon: 'work',
   },
-]
+];
 
 export const techStack = [
   'Python',
@@ -93,7 +94,7 @@ export const techStack = [
   'CUDA',
   'TFLite',
   'Node.js',
-]
+];
 
 export const projects = {
   featured: {
@@ -118,6 +119,7 @@ export const projects = {
     caseStudy:
       'https://medium.com/@rakshitsinha1444/how-i-used-dinov2-embeddings-to-detect-infrastructure-degradation-no-object-detector-could-see-ed57272e72c0',
   },
+
   grid: [
     {
       slug: 'kisansathi',
@@ -139,7 +141,13 @@ export const projects = {
       title: 'Research Assistant · Intelligent Retrieval Engine',
       description:
         'An automated research assistant that retrieves, summarizes, and extracts knowledge from multiple sources. Uses LLMs and embedding-based semantic search to understand user queries, fetch relevant documents, and generate concise, context-aware insights, cutting the time from question to synthesized answer.',
-      tags: ['LLMs', 'Embeddings', 'Semantic Search', 'Prompt Engineering', 'Python'],
+      tags: [
+        'LLMs',
+        'Embeddings',
+        'Semantic Search',
+        'Prompt Engineering',
+        'Python',
+      ],
       github: 'https://github.com/Arvoxis/Research-assistant',
     },
     {
@@ -167,7 +175,7 @@ export const projects = {
       github: 'https://github.com/Arvoxis/Harry-puttar-snitch-game',
     },
   ],
-}
+};
 
 export const articles = [
   {
@@ -179,18 +187,13 @@ export const articles = [
     readTime: '8 min read',
     url: 'https://medium.com/@rakshitsinha1444/how-i-used-dinov2-embeddings-to-detect-infrastructure-degradation-no-object-detector-could-see-ed57272e72c0',
   },
-]
+];
 
 export const experience = [
   {
-
     role: 'Vice Chairperson',
     org: 'TAM-VIT (The AI & ML Club)',
-
     company: 'The AI & ML Club, VIT Vellore',
-    role: 'Vice-Chairperson',
-    period: '2025 — Present',
-
     location: 'VIT Vellore',
     period: '2024 · Present',
     description:
@@ -198,14 +201,11 @@ export const experience = [
   },
   {
     role: 'Core Member',
-
     org: 'Toastmasters VIT',
-
-    period: '2024 — 2026',
-
     location: 'VIT Vellore',
     period: '2024 · Present',
     description:
       'Public speaking, communication skills development, meeting facilitation.',
   },
-]
+];
+
