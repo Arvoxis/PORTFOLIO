@@ -1,44 +1,37 @@
 import { experience } from '../config/data'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
-function ExpItem({ item, index }) {
-  const [ref, visible] = useScrollAnimation()
-  return (
-    <li
-      ref={ref}
-      className={`exp-item fade-up ${visible ? 'in' : ''}`}
-      style={{ transitionDelay: `${index * 80}ms` }}
-    >
-      <div className="exp-meta">
-        <div className="exp-period">{item.period}</div>
-        <div className="exp-loc">{item.location}</div>
-      </div>
-      <div className="exp-body">
-        <div className="exp-role">{item.role}</div>
-        <div className="exp-company">{item.company}</div>
-        <ul className="exp-bullets">
-          {item.bullets.map((b, i) => (
-            <li key={i}>{b}</li>
-          ))}
-        </ul>
-      </div>
-    </li>
-  )
-}
-
 export default function Experience() {
+  const [ref, vis] = useScrollAnimation()
+  const [tlRef, tlVis] = useScrollAnimation()
+
   return (
-    <section className="section" id="experience">
+    <section id="experience" className="section" ref={ref}>
       <div className="container">
-        <div className="section-label">
-          <span className="s-num">02</span>
-          <span className="s-title">Experience</span>
+        <span className="section-watermark" aria-hidden="true">04 Roles</span>
+        <div className={`section-head reveal ${vis ? 'in' : ''}`}>
+          <span className="index">Affiliations</span>
+          <h2>Experience &amp; Leadership</h2>
+          <p className="sub">Roles I hold and have held on campus.</p>
         </div>
-        <ul className="exp-list">
-          {experience.map((item, i) => (
-            <ExpItem key={i} item={item} index={i} />
+
+        <div className={`timeline reveal-stagger ${tlVis ? 'in' : ''}`} ref={tlRef}>
+          {experience.map((e, i) => (
+            <div
+              className={`timeline-entry ${i === 0 ? 'active' : ''}`}
+              key={`${e.role}-${e.org}`}
+            >
+              <div className="period">{e.period}</div>
+              <h3>{e.role}</h3>
+              <div className="org">
+                {e.org}
+                <span className="sep">·</span>
+                {e.location}
+              </div>
+              <p className="desc">{e.description}</p>
+            </div>
           ))}
-        </ul>
+        </div>
       </div>
     </section>
   )

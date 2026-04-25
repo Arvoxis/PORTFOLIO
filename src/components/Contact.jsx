@@ -1,142 +1,107 @@
-import { personal } from '../config/data'
+import { useEffect, useState } from 'react'
+import { personalInfo } from '../config/data'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 
-const IconGitHub = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M12 0C5.374 0 0 5.373 0 12c0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23A11.509 11.509 0 0 1 12 5.803c1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576C20.566 21.797 24 17.3 24 12c0-6.627-5.373-12-12-12z" />
+const MailIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" className="icon">
+    <rect x="3" y="5" width="18" height="14" rx="1.5" />
+    <path d="m3 7 9 6 9-6" />
+  </svg>
+)
+const GhIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="icon">
+    <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.09 3.3 9.4 7.87 10.93.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.32-1.28-1.67-1.28-1.67-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.3 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 2.87-.39c.97 0 1.95.13 2.87.39 2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z" />
+  </svg>
+)
+const LiIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="icon">
+    <path d="M4.98 3.5a2.5 2.5 0 1 1 0 5 2.5 2.5 0 0 1 0-5ZM3 9h4v12H3V9Zm6 0h3.8v1.7h.1c.5-1 1.9-2 3.9-2 4.1 0 4.9 2.7 4.9 6.3V21h-4v-5.3c0-1.3 0-3-1.8-3s-2.1 1.4-2.1 2.9V21H9V9Z" />
+  </svg>
+)
+const MdIcon = () => (
+  <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor" className="icon">
+    <path d="M13.54 12a6.8 6.8 0 0 1-6.77 6.82A6.8 6.8 0 0 1 0 12a6.8 6.8 0 0 1 6.77-6.82A6.8 6.8 0 0 1 13.54 12ZM20.96 12c0 3.54-1.51 6.42-3.38 6.42-1.87 0-3.39-2.88-3.39-6.42s1.52-6.42 3.39-6.42 3.38 2.88 3.38 6.42M24 12c0 3.17-.53 5.75-1.19 5.75-.66 0-1.19-2.58-1.19-5.75s.53-5.75 1.19-5.75C23.47 6.25 24 8.83 24 12Z" />
   </svg>
 )
 
-const IconLinkedIn = () => (
-  <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433a2.062 2.062 0 0 1-2.063-2.065 2.064 2.064 0 1 1 2.063 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z" />
-  </svg>
-)
-
-const IconX = () => (
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
-    <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.744l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z" />
-  </svg>
-)
+function formatIST(d = new Date()) {
+  return d.toLocaleTimeString('en-IN', {
+    timeZone: 'Asia/Kolkata',
+    hour: '2-digit',
+    minute: '2-digit',
+    hour12: false,
+  })
+}
 
 export default function Contact() {
-  const [leftRef,  leftVis]  = useScrollAnimation()
-  const [rightRef, rightVis] = useScrollAnimation()
+  const [ref, vis] = useScrollAnimation()
+  const [cardsRef, cardsVis] = useScrollAnimation()
+  const [istTime, setIstTime] = useState(() => formatIST())
 
-  function handleSubmit(e) {
-    e.preventDefault()
-    const data  = new FormData(e.target)
-    const name  = data.get('name')
-    const email = data.get('email')
-    const msg   = data.get('message')
-    window.location.href =
-      `mailto:${personal.email}?subject=Portfolio contact from ${name}&body=${encodeURIComponent(`From: ${email}\n\n${msg}`)}`
-  }
+  useEffect(() => {
+    const update = () => setIstTime(formatIST())
+    update()
+    const id = setInterval(update, 30000)
+    return () => clearInterval(id)
+  }, [])
 
   return (
-    <section className="section" id="contact">
+    <section id="contact" className="section section-alt contact" ref={ref}>
       <div className="container">
-        <div className="section-label">
-          <span className="s-num">05</span>
-          <span className="s-title">Contact</span>
+        <span className="section-watermark" aria-hidden="true">05 Contact</span>
+        <h2 className={`reveal ${vis ? 'in' : ''}`}>
+          <span className="line-1">Let's build</span>
+          <span className="line-2">something.</span>
+        </h2>
+        <p className={`sub reveal ${vis ? 'in' : ''}`}>
+          I'm actively looking for ML/SDE internship opportunities for Summer/Fall 2025. Open to research
+          collaborations and interesting problems.
+        </p>
+
+        <div className={`contact-cards reveal-stagger ${cardsVis ? 'in' : ''}`} ref={cardsRef}>
+          <a href={`mailto:${personalInfo.email}`} className="contact-card">
+            <MailIcon />
+            <span className="label">Email</span>
+            <span className="handle">{personalInfo.email}</span>
+          </a>
+          <a
+            href={personalInfo.github}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-card"
+          >
+            <GhIcon />
+            <span className="label">GitHub</span>
+            <span className="handle">@{personalInfo.githubHandle}</span>
+          </a>
+          <a
+            href={personalInfo.linkedin}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-card"
+          >
+            <LiIcon />
+            <span className="label">LinkedIn</span>
+            <span className="handle">/{personalInfo.linkedinHandle}</span>
+          </a>
+          <a
+            href={personalInfo.medium}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="contact-card"
+          >
+            <MdIcon />
+            <span className="label">Medium</span>
+            <span className="handle">{personalInfo.mediumHandle}</span>
+          </a>
         </div>
 
-        <div className="contact-inner">
-          {/* Left: copy + direct links */}
-          <div
-            ref={leftRef}
-            className={`fade-up ${leftVis ? 'in' : ''}`}
-          >
-            <h2 className="contact-heading">
-              Let's<br />
-              <span className="outline">Work</span><br />
-              Together.
-            </h2>
-            <p className="contact-desc">
-              Have a project in mind, a role to discuss, or just want to say hello?
-              My inbox is always open — I'll get back to you within 24 hours.
-            </p>
-            <a
-              href={`mailto:${personal.email}`}
-              className="contact-email-link"
-            >
-              <span className="arrow">→</span>
-              {personal.email}
-            </a>
-            <div className="contact-socials">
-              <a
-                href={personal.socials.github}
-                className="social-btn"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="GitHub"
-              >
-                <IconGitHub />
-              </a>
-              <a
-                href={personal.socials.linkedin}
-                className="social-btn"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="LinkedIn"
-              >
-                <IconLinkedIn />
-              </a>
-              <a
-                href={personal.socials.twitter}
-                className="social-btn"
-                target="_blank"
-                rel="noopener noreferrer"
-                aria-label="X / Twitter"
-              >
-                <IconX />
-              </a>
-            </div>
-          </div>
-
-          {/* Right: contact form */}
-          <div
-            ref={rightRef}
-            className={`fade-up ${rightVis ? 'in' : ''}`}
-            style={{ transitionDelay: '140ms' }}
-          >
-            <form className="contact-form" onSubmit={handleSubmit}>
-              <div className="form-row">
-                <label htmlFor="cf-name">Name</label>
-                <input
-                  id="cf-name"
-                  name="name"
-                  type="text"
-                  placeholder="Your name"
-                  autoComplete="name"
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="cf-email">Email</label>
-                <input
-                  id="cf-email"
-                  name="email"
-                  type="email"
-                  placeholder="your@email.com"
-                  autoComplete="email"
-                  required
-                />
-              </div>
-              <div className="form-row">
-                <label htmlFor="cf-message">Message</label>
-                <textarea
-                  id="cf-message"
-                  name="message"
-                  placeholder="What's on your mind?"
-                  required
-                />
-              </div>
-              <button type="submit" className="form-submit">
-                Send Message →
-              </button>
-            </form>
-          </div>
+        <div className="contact-footer-line">
+          <span>Based in {personalInfo.location}</span>
+          <span className="sep">·</span>
+          <span className="ist-clock">{istTime} IST</span>
+          <span className="sep">·</span>
+          <span>{personalInfo.availability}</span>
         </div>
       </div>
     </section>
