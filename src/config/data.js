@@ -22,6 +22,27 @@ export const personalInfo = {
   location: 'Vellore, India',
   status: 'Open to Internships',
   availability: 'Available for remote',
+
+export const personal = {
+  name: {
+    first: 'Rakshit',
+    last: 'Sinha',
+  },
+  role: 'Machine Learning & AI Developer',
+  tagline: 'Machine Learning & AI Developer',
+  subTagline:
+    'B.Tech Computer Science · VIT Vellore · Class of 2028',
+  bio: "Computer Science undergraduate at VIT Vellore with experience in machine learning, NLP, and computer vision. Skilled in Python-based ML workflows using Scikit-learn, NumPy, and Pandas, with exposure to TensorFlow and Keras. Built projects including LLM-based semantic search, supervised ML models, and gesture recognition using OpenCV and MediaPipe. Vice Chairperson of the AI & ML Club, seeking an AI/ML internship.",
+  email: 'rakshitsinha1444@gmail.com',
+  phone: '+91 9113865011',
+  location: 'VIT Vellore, Tamil Nadu, India',
+  resumeUrl: '#',
+  socials: {
+    github: 'https://github.com',
+    linkedin: 'https://www.linkedin.com/in/rakshit-sinha-vit/',
+    twitter: null,
+  },
+
 }
 
 export const navLinks = [
@@ -162,8 +183,14 @@ export const articles = [
 
 export const experience = [
   {
+<<<<<<< HEAD
     role: 'Vice Chairperson',
     org: 'TAM-VIT (The AI & ML Club)',
+=======
+    company: 'The AI & ML Club, VIT Vellore',
+    role: 'Vice-Chairperson',
+    period: '2025 — Present',
+>>>>>>> 0cc5388 (Updated portfolio files)
     location: 'VIT Vellore',
     period: '2024 · Present',
     description:
@@ -171,7 +198,11 @@ export const experience = [
   },
   {
     role: 'Core Member',
+<<<<<<< HEAD
     org: 'Toastmasters VIT',
+=======
+    period: '2024 — 2026',
+>>>>>>> 0cc5388 (Updated portfolio files)
     location: 'VIT Vellore',
     period: '2024 · Present',
     description:
