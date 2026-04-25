@@ -183,14 +183,14 @@ export const articles = [
 
 export const experience = [
   {
-<<<<<<< HEAD
+
     role: 'Vice Chairperson',
     org: 'TAM-VIT (The AI & ML Club)',
-=======
+
     company: 'The AI & ML Club, VIT Vellore',
     role: 'Vice-Chairperson',
     period: '2025 — Present',
->>>>>>> 0cc5388 (Updated portfolio files)
+
     location: 'VIT Vellore',
     period: '2024 · Present',
     description:
@@ -198,11 +198,11 @@ export const experience = [
   },
   {
     role: 'Core Member',
-<<<<<<< HEAD
+
     org: 'Toastmasters VIT',
-=======
+
     period: '2024 — 2026',
->>>>>>> 0cc5388 (Updated portfolio files)
+
     location: 'VIT Vellore',
     period: '2024 · Present',
     description:
