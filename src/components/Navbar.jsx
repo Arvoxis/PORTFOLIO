@@ -1,119 +1,71 @@
-import { useState, useEffect } from 'react'
-import { personalInfo, navLinks } from '../config/data'
+import { useEffect, useRef, useState } from 'react'
+import { navLinks } from '../config/data'
 
 export default function Navbar() {
-  const [scrolled, setScrolled] = useState(false)
-  const [active, setActive] = useState('home')
-  const [menuOpen, setMenuOpen] = useState(false)
+  const [open, setOpen] = useState(false)
+  const [active, setActive] = useState('')
+  const toggle = useRef()
 
+  // highlight the sheet currently crossing the middle of the viewport
   useEffect(() => {
-    const onScroll = () => setScrolled(window.scrollY > 40)
-    onScroll()
-    window.addEventListener('scroll', onScroll, { passive: true })
-    return () => window.removeEventListener('scroll', onScroll)
-  }, [])
-
-  useEffect(() => {
-    const ids = navLinks.map((l) => l.href.slice(1))
-    const observer = new IntersectionObserver(
-      (entries) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) setActive(entry.target.id)
-        })
-      },
-      { rootMargin: '-45% 0px -45% 0px', threshold: 0 }
+    const obs = new IntersectionObserver(
+      (entries) => entries.forEach((e) => e.isIntersecting && setActive(e.target.id)),
+      { rootMargin: '-50% 0px -50% 0px' }
     )
-    ids.forEach((id) => {
-      const el = document.getElementById(id)
-      if (el) observer.observe(el)
+    // #home is watched too so nothing stays highlighted back on the hero
+    ;['#home', ...navLinks.map((l) => l.href)].forEach((href) => {
+      const el = document.querySelector(href)
+      if (el) obs.observe(el)
     })
-    return () => observer.disconnect()
+    return () => obs.disconnect()
   }, [])
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? 'hidden' : ''
-    return () => {
-      document.body.style.overflow = ''
+    if (!open) return
+    // closing hides the links, so hand focus back to the toggle rather than lose it
+    const onKey = (e) => {
+      if (e.key !== 'Escape') return
+      setOpen(false)
+      toggle.current.focus()
     }
-  }, [menuOpen])
-
-  const close = () => setMenuOpen(false)
+    window.addEventListener('keydown', onKey)
+    return () => window.removeEventListener('keydown', onKey)
+  }, [open])
 
   return (
-    <>
-      <nav className={`nav ${scrolled ? 'scrolled' : ''}`} aria-label="Primary">
-        <div className="container">
-          <div className="nav-inner">
-            <a href="#home" className="nav-logo" aria-label="Home" onClick={close}>
-              <span className="badge">{personalInfo.initials}</span>
-              <span>Rakshit Sinha</span>
-            </a>
-
-            <ul className="nav-links">
-              {navLinks.map((link) => (
-                <li key={link.href}>
-                  <a
-                    href={link.href}
-                    className={active === link.href.slice(1) ? 'active' : ''}
-                  >
-                    {link.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-
-            <div className="nav-right">
-              <span className="status-badge" aria-live="polite">
-                <span className="status-dot" aria-hidden="true" />
-                {personalInfo.status}
-              </span>
-              <a
-                href={personalInfo.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="icon-link"
-                aria-label="GitHub"
-              >
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true">
-                  <path d="M12 .5C5.73.5.5 5.73.5 12c0 5.09 3.3 9.4 7.87 10.93.58.1.79-.25.79-.56v-2c-3.2.7-3.88-1.54-3.88-1.54-.52-1.32-1.28-1.67-1.28-1.67-1.05-.72.08-.7.08-.7 1.15.08 1.76 1.18 1.76 1.18 1.03 1.76 2.7 1.25 3.36.96.1-.75.4-1.25.73-1.54-2.56-.29-5.25-1.28-5.25-5.7 0-1.26.45-2.3 1.18-3.1-.12-.29-.51-1.46.11-3.04 0 0 .96-.31 3.15 1.18a10.9 10.9 0 0 1 2.87-.39c.97 0 1.95.13 2.87.39 2.19-1.49 3.15-1.18 3.15-1.18.62 1.58.23 2.75.11 3.04.73.8 1.18 1.84 1.18 3.1 0 4.43-2.69 5.41-5.26 5.69.41.36.78 1.06.78 2.13v3.16c0 .31.21.67.8.56A11.5 11.5 0 0 0 23.5 12C23.5 5.73 18.27.5 12 .5Z" />
-                </svg>
-              </a>
-              <button
-                className={`hamburger ${menuOpen ? 'open' : ''}`}
-                onClick={() => setMenuOpen((v) => !v)}
-                aria-label={menuOpen ? 'Close menu' : 'Open menu'}
-                aria-expanded={menuOpen}
-              >
-                <span />
-              </button>
-            </div>
-          </div>
-        </div>
-      </nav>
-
-      <div className={`mobile-drawer ${menuOpen ? 'open' : ''}`} aria-hidden={!menuOpen}>
-        <div className="container">
-          <ul>
-            {navLinks.map((link) => (
-              <li key={link.href}>
-                <a href={link.href} onClick={close}>
-                  {link.label} <span style={{ float: 'right', opacity: 0.4 }}>↗</span>
+    <header className="nav">
+      <a href="#home" className="nav-brand" data-detect="logo.rs">
+        RS<span>/ Drawing set 2026</span>
+      </a>
+      <button
+        ref={toggle}
+        className="nav-toggle"
+        aria-expanded={open}
+        aria-controls="nav-links"
+        onClick={() => setOpen((o) => !o)}
+      >
+        {open ? 'Close' : 'Index'}
+      </button>
+      <nav id="nav-links" className={open ? 'open' : ''} aria-label="Sections">
+        <ul>
+          {navLinks.map((l, i) => {
+            const on = active === l.href.slice(1)
+            return (
+              <li key={l.href}>
+                <a
+                  href={l.href}
+                  className={on ? 'active' : ''}
+                  aria-current={on ? 'location' : undefined}
+                  onClick={() => setOpen(false)}
+                >
+                  <span>0{i + 2}</span>
+                  {l.label}
                 </a>
               </li>
-            ))}
-            <li>
-              <a
-                href={personalInfo.github}
-                target="_blank"
-                rel="noopener noreferrer"
-                onClick={close}
-              >
-                GitHub <span style={{ float: 'right', opacity: 0.4 }}>↗</span>
-              </a>
-            </li>
-          </ul>
-        </div>
-      </div>
-    </>
+            )
+          })}
+        </ul>
+      </nav>
+    </header>
   )
 }

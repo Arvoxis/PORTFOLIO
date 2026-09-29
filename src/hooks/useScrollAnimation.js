@@ -17,9 +17,7 @@ export function useScrollAnimation(options = {}) {
 
     const el = ref.current
     if (el) observer.observe(el)
-    return () => {
-      if (el) observer.unobserve(el)
-    }
+    return () => observer.disconnect()
   }, [])
 
   return [ref, isVisible]
