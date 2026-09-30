@@ -6,11 +6,13 @@ import Plate from './Plates'
 function Row({ p, flip, children }) {
   const [ref, vis] = useScrollAnimation()
   return (
-    <article ref={ref} className={`row ${flip ? 'flip' : ''} ${vis ? 'in' : ''}`} data-detect={p.detect}>
+    <article ref={ref} id={`dwg-${p.plate}`} className={`row ${flip ? 'flip' : ''} ${vis ? 'in' : ''}`} data-detect={p.detect}>
       <figure className="plate-frame">
         <Plate name={p.plate} />
         <figcaption>
-          <span>{p.dwg}</span>
+          <span>
+            {p.dwg} · {p.title}
+          </span>
           <span>{p.context}</span>
         </figcaption>
       </figure>
@@ -25,8 +27,8 @@ function Row({ p, flip, children }) {
         {children}
         <p className="stack">{p.stack.join(' · ')}</p>
         {p.github ? (
-          <a className="text-link ext" href={p.github} target="_blank" rel="noreferrer">
-            Source<span className="sr-only">: {p.title} on GitHub, opens in a new tab</span>
+          <a className="source ext" href={p.github} target="_blank" rel="noreferrer">
+            View source<span className="sr-only">: {p.title} on GitHub, opens in a new tab</span>
           </a>
         ) : (
           <span className="note">{p.note}</span>
@@ -57,7 +59,7 @@ export default function Projects() {
             <span className="writeup-ref">Write-up [{writeup.ref}]</span>
             <strong>{writeup.title}</strong>
             <span className="writeup-meta">
-              {writeup.date} · {writeup.readTime} · Medium ↗
+              {writeup.date} · {writeup.readTime} · <span className="ext">Medium</span>
               <span className="sr-only"> (opens in a new tab)</span>
             </span>
           </a>

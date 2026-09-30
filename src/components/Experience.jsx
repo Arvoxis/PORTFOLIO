@@ -61,7 +61,7 @@ export default function Experience() {
                   {more.length > 0 && (
                     <details className="more">
                       <summary>
-                        {more.length} more <span aria-hidden="true">+</span>
+                        {more.length} more<span className="sr-only"> from {e.org}</span> <span aria-hidden="true">+</span>
                       </summary>
                       <Points items={more} />
                     </details>

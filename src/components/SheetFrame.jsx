@@ -13,12 +13,17 @@ export default function SheetFrame() {
     let x = 0
     let y = 0
     let raf = 0
+    // page height and rail length only change on resize, so scrolling never has to measure layout
+    let max = 0
+    let rail = 0
+    const measure = () => {
+      max = root.scrollHeight - window.innerHeight
+      rail = marker.current.parentElement.clientHeight - 36 - 2
+    }
 
     const paint = () => {
       raf = 0
-      const max = root.scrollHeight - window.innerHeight
       const p = max > 0 ? window.scrollY / max : 0
-      const rail = marker.current.parentElement.clientHeight - 36 - 2
       marker.current.style.transform = `translateY(${(p * rail).toFixed(1)}px)`
       readout.current.textContent = `X ${String(x).padStart(4, '0')}  Y ${String(y + Math.round(window.scrollY)).padStart(5, '0')}`
     }
@@ -31,14 +36,19 @@ export default function SheetFrame() {
       queue()
     }
 
+    measure()
     paint()
+    const ro = new ResizeObserver(() => {
+      measure()
+      queue()
+    })
+    ro.observe(document.body)
     window.addEventListener('scroll', queue, { passive: true })
-    window.addEventListener('resize', queue)
     window.addEventListener('pointermove', move, { passive: true })
     return () => {
       cancelAnimationFrame(raf)
+      ro.disconnect()
       window.removeEventListener('scroll', queue)
-      window.removeEventListener('resize', queue)
       window.removeEventListener('pointermove', move)
     }
   }, [])

@@ -12,7 +12,6 @@ export const personal = {
   tagline: 'I build vision models that fly, and the systems that get them there.',
   standing: "CS undergrad, VIT Vellore '28 · Summer 2026: AI/ML Engineering Intern, Skylark Drones",
   education: 'B.Tech CSE · VIT Vellore · 2024–2028',
-  status: 'Open to Summer 2027 internships',
   location: 'Vellore, India',
   email: 'rakshitsinha1444@gmail.com',
   github: 'https://github.com/Arvoxis',
@@ -93,7 +92,7 @@ export const experience = [
     role: 'Core Member',
     org: 'Toastmasters VIT',
     place: 'VIT Vellore',
-    period: '2024 – Present',
+    period: '2024 – 2025',
     summary: 'Public speaking, storytelling and structured communication.',
     metrics: [],
     lead: 0,
@@ -216,6 +215,14 @@ export const skills = [
   { part: 'Web', items: ['FastAPI', 'WebSockets', 'Node.js', 'Express', 'React', 'Streamlit'] },
   { part: 'Data / Infra', items: ['PostgreSQL', 'pgvector', 'PostGIS', 'MongoDB', 'Docker', 'Git LFS', 'Linux'] },
   { part: 'Languages', items: ['Python', 'JavaScript', 'C/C++', 'Java', 'SQL'] },
+]
+
+// Lettered parts in the exploded view on Sheet 02, top to bottom (labels in the 3D scene and the key under the notes)
+export const droneParts = [
+  { mark: 'A', label: '4× motors' },
+  { mark: 'B', label: 'Ducted props' },
+  { mark: 'C', label: 'Airframe' },
+  { mark: 'D', label: 'Vision camera' },
 ]
 
 // Credit required by the drone model's CC BY 4.0 licence

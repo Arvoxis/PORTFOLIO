@@ -7,7 +7,7 @@
 ![three.js](https://img.shields.io/badge/three.js-R3F_9_+_drei-000000?logo=threedotjs&logoColor=white)
 ![Vercel](https://img.shields.io/badge/Deploy-Vercel-000000?logo=vercel&logoColor=white)
 
-*A cyanotype engineering drawing set: a real 3D drone, its exploded assembly, a tower inspection and a swarm in plan view.*
+*A cyanotype engineering drawing set: a real 3D drone, its exploded assembly and a tower inspection.*
 
 </div>
 
@@ -23,7 +23,6 @@ three.js scene behind the page, rendered as a technical illustration, is choreog
    led out to a label column beside it.
 3. **Revision history:** it flies to an inked lattice transmission tower. A scan plane sweeps the tower,
    detection boxes snap onto the insulators, and the matching mAP figure lights up in the Skylark card.
-4. **Drawings:** as the sheet comes up, five miniature drones fly a leaderless swarm in plan view.
 
 Each project has an illustrated SVG "plate" that drafts itself in as you scroll. Hovering any card snaps
 YOLO-style detection brackets onto it.
@@ -49,12 +48,12 @@ content update.
 | Path | What |
 |---|---|
 | `src/components/` | One component per sheet, plus `Plates` (project illustrations), `SheetFrame` (border, rulers, readout) and `Detector` (hover brackets) |
-| `src/components/scene/` | Lazy-loaded R3F scene: `Scene` (lighting and scroll stage), `model` (GLB loader and part map), `Drone`, `Tower`, `Swarm` |
+| `src/components/scene/` | Lazy-loaded R3F scene: `Scene` (lighting and scroll stage), `model` (GLB loader and part map), `Drone`, `Tower` |
 | `public/models/drone.glb` | The drone. Textures are stripped, the mesh is simplified, and it's meshopt-compressed (25 MB down to 0.6 MB) |
 | `src/index.css` | Every style; design tokens in `:root` |
 
-Respects `prefers-reduced-motion`: the drone holds a static pose and reveal animations are off. On phones
-the 3D only appears in the hero, and it is skipped entirely when data-saver is on.
+Respects `prefers-reduced-motion`: the drone holds still, reveal animations are off, and the scroll-driven 3D stops after the hero. On phones the
+3D only appears in the hero, and it is skipped entirely when data-saver is on.
 
 ## Credits
 

@@ -1,4 +1,4 @@
-import { notes, spec } from '../config/data'
+import { notes, spec, droneParts } from '../config/data'
 import { useScrollAnimation } from '../hooks/useScrollAnimation'
 import SheetHead from './SheetHead'
 
@@ -18,6 +18,16 @@ export default function About() {
               </li>
             ))}
           </ol>
+
+          {/* key to the lettered callouts on the exploded drone beside the notes */}
+          <p className="parts-key rv" style={{ '--i': 4 }} aria-hidden="true">
+            <span>Fig. key</span>
+            {droneParts.map((p) => (
+              <span key={p.mark}>
+                <b>{p.mark}</b> {p.label}
+              </span>
+            ))}
+          </p>
 
           <div className="notes-spec rv" style={{ '--i': 4 }}>
             <figure className="cyano ticks" data-detect="person.rakshit">

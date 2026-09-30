@@ -33,6 +33,8 @@ export default function Detector() {
       el.style.transform = `translate3d(${r.left - pad}px, ${r.top - pad}px, 0)`
       el.style.width = `${r.width + pad * 2}px`
       el.style.height = `${r.height + pad * 2}px`
+      // red for things you can click, cream for static blocks, so a detected card doesn't read as a link
+      el.classList.toggle('link', target.matches('a, button'))
       el.classList.add('on')
     }
     const queue = () => {

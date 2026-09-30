@@ -19,12 +19,12 @@ const DIMS = [
   1.55, -1.1, 0, 1.45, -1.14, 0,
 ]
 
-// callout index on the page for each pinned part
+// callout index on the page for each pinned part; lettered A-D top to bottom as the held exploded view stacks them
 const CALLOUT = {
-  DJI_Avata2_Body_Main_2: 0,
-  DJI_Avata2_Lens_6: 1,
-  DJI_Avata2_Propeller_Rings_7: 2,
-  DJI_Avata2_Arms_Motors_1: 3,
+  DJI_Avata2_Arms_Motors_1: 0,
+  DJI_Avata2_Propeller_Rings_7: 1,
+  DJI_Avata2_Body_Main_2: 2,
+  DJI_Avata2_Lens_6: 3,
 }
 
 // the exploded view holds this angle, so the stack reads and the callouts stay put
@@ -88,7 +88,8 @@ export default function Drone({ stage, callouts }) {
 
     const explode = ss(0.35, 0.9, s) * (1 - ss(1.45, 1.8, s))
     const fly = ss(1.5, 2.1, s) // off to inspect the tower
-    const fade = 1 - ss(2.55, 2.95, s)
+    // narrow screens have no room beside the experience cards for the fly-over: the drone bows out before the tower
+    const fade = aspect < 1.45 && !mobile ? 1 - ss(1.4, 1.75, s) : 1 - ss(2.55, 2.95, s)
     // narrow laptops: the exploded drone shares space with text, so draw its lines a little lighter
     const dim = mobile ? 0.5 : aspect < 1.45 ? lerp(1, 0.75, explode) : 1
 
@@ -100,14 +101,17 @@ export default function Drone({ stage, callouts }) {
       groups.current[i].position.set(p.off[0] * explode, p.off[1] * explode, p.off[2] * explode)
     })
 
-    const home = mobile ? [0, vh * 0.3, 0] : [vw * (0.22 + 0.1 * explode), 0.1, 0]
+    // phones: centred in the slot reserved above the hero text (~175px down, see .hero-wrap)
+    const home = mobile ? [0, (0.5 - 175 / state.size.height) * vh, 0] : [vw * (0.22 + 0.04 * explode), 0.1, 0]
     // hover above the tagged insulator on the tower's near cross-arm, outside the lattice
-    const T = towerPlace(state.viewport, mobile)
+    const T = towerPlace(state, stage.current)
     const inspect = [T.x - 0.94 * T.s, T.y + 3.35 * T.s, -0.5 + 0.6 * T.s]
     const bob = reduce ? 0 : Math.sin(t * 1.3) * 0.05
+    const size = mobile ? 0.52 : Math.min(1.15, vw * 0.115) * (1 - 0.3 * explode)
+    // keep the exploded spread (about 2.1 x size either side of centre) inside the frame on wide, short laptops
+    if (!mobile) home[0] = Math.min(home[0], vw / 2 - 0.35 - 2.1 * size)
     const r = root.current
     r.position.set(lerp(home[0], inspect[0], fly), lerp(home[1], inspect[1], fly) + bob, lerp(home[2], inspect[2], fly))
-    const size = mobile ? 0.62 : Math.min(1.15, vw * 0.115) * (1 - 0.3 * explode)
     r.scale.setScalar(lerp(size, size * 0.4, fly))
     if (reduce) {
       r.rotation.set(lerp(0.42, HOLD_X, explode), lerp(-0.65, HOLD_Y, explode), 0)
@@ -233,9 +237,10 @@ export default function Drone({ stage, callouts }) {
       </group>
       <group ref={under}>
         <lineSegments geometry={dims} material={dimMat} />
+        {/* renders a few frames once it appears, then holds: the soft blob barely changes as the drone turns */}
         <ContactShadows
           ref={shadow}
-          frames={shadowOn ? Infinity : 1}
+          frames={shadowOn ? 24 : 1}
           position={[0, -0.75, 0]}
           scale={4}
           far={1.6}

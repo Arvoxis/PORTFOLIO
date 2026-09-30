@@ -5,6 +5,7 @@ export default function Navbar() {
   const [open, setOpen] = useState(false)
   const [active, setActive] = useState('')
   const toggle = useRef()
+  const header = useRef()
 
   // highlight the sheet currently crossing the middle of the viewport
   useEffect(() => {
@@ -20,20 +21,28 @@ export default function Navbar() {
     return () => obs.disconnect()
   }, [])
 
+  // the open phone menu closes on Escape (focus back to the toggle), a tap outside it, or a scroll
   useEffect(() => {
     if (!open) return
-    // closing hides the links, so hand focus back to the toggle rather than lose it
     const onKey = (e) => {
       if (e.key !== 'Escape') return
       setOpen(false)
       toggle.current.focus()
     }
+    const onDown = (e) => header.current.contains(e.target) || setOpen(false)
+    const onScroll = () => setOpen(false)
     window.addEventListener('keydown', onKey)
-    return () => window.removeEventListener('keydown', onKey)
+    document.addEventListener('pointerdown', onDown)
+    window.addEventListener('scroll', onScroll, { passive: true })
+    return () => {
+      window.removeEventListener('keydown', onKey)
+      document.removeEventListener('pointerdown', onDown)
+      window.removeEventListener('scroll', onScroll)
+    }
   }, [open])
 
   return (
-    <header className="nav">
+    <header className="nav" ref={header}>
       <a href="#home" className="nav-brand" data-detect="logo.rs">
         RS<span>/ Drawing set 2026</span>
       </a>

@@ -1,22 +1,16 @@
-import { Suspense, useEffect, useRef } from 'react'
-import { Canvas, useFrame } from '@react-three/fiber'
-import { Environment, Lightformer } from '@react-three/drei'
+import { Suspense, useEffect, useRef, useState } from 'react'
+import { Canvas, useFrame, useThree } from '@react-three/fiber'
+import { Environment, Lightformer, PerformanceMonitor } from '@react-three/drei'
 import Drone from './Drone'
 import Tower from './Tower'
-import Swarm from './Swarm'
+import { MODEL_URL } from './model'
+import { droneParts } from '../../config/data'
 
 // Sections the scene is choreographed against, in scroll order.
 const STAGES = ['home', 'notes', 'revisions', 'drawings']
 
-// DOM labels pinned to 3D parts. 0-3 belong to the drone, 4 to the tower.
-// Drone labels are kept short: they sit in a column beside the drone, between it and the text.
-const CALLOUTS = [
-  { mark: 'A', label: 'Airframe' },
-  { mark: 'B', label: 'Vision camera' },
-  { mark: 'C', label: 'Ducted props' },
-  { mark: 'D', label: '4× motors' },
-  { mark: 'insulator 0.76', label: 'OBB', tag: true },
-]
+// DOM labels pinned to 3D parts. 0-3 belong to the drone (their key is also printed under the notes), 4 to the tower.
+const CALLOUTS = [...droneParts, { mark: 'insulator 0.76', label: 'OBB', tag: true }]
 
 // Section tops/heights in page coordinates, re-measured only when the layout changes.
 // Also records where the notes text ends, so drone callouts know how far left they may go.
@@ -31,6 +25,7 @@ function useSections(stage) {
         return { top: r.top + window.scrollY, h: r.height }
       })
       stage.current.textRight = document.querySelector('.notes-col')?.getBoundingClientRect().right ?? 0
+      stage.current.revRight = document.querySelector('.revs')?.getBoundingClientRect().right ?? 0
     }
     measure()
     const ro = new ResizeObserver(measure)
@@ -50,8 +45,30 @@ function readStage(boxes) {
   return s
 }
 
-// Eases the shared stage toward the scroll position once per frame.
+// Eases the shared stage toward the scroll position once per frame. Once the choreography is over (past the
+// tower, or past the hero on phones and with reduced motion) there is nothing left to draw, so it stops the render
+// loop and drops the canvas layer; scrolling back up wakes it.
 function Rig({ stage, boxes, wrap }) {
+  const setFrameloop = useThree((s) => s.setFrameloop)
+  const idle = useRef(false)
+  const end = () => (stage.current.mobile || stage.current.reduce ? 0.75 : 3.0)
+
+  useEffect(() => {
+    const wake = () => {
+      const pinned = import.meta.env.DEV ? window.__stage : undefined
+      if (!idle.current || (pinned ?? readStage(boxes.current)) > end()) return
+      idle.current = false
+      wrap.current.style.visibility = ''
+      setFrameloop('always')
+    }
+    window.addEventListener('scroll', wake, { passive: true })
+    window.addEventListener('resize', wake)
+    return () => {
+      window.removeEventListener('scroll', wake)
+      window.removeEventListener('resize', wake)
+    }
+  }, [])
+
   useFrame((state, dt) => {
     const st = stage.current
     // dev only: window.__stage pins the choreography for screenshots (stripped from production builds)
@@ -59,18 +76,33 @@ function Rig({ stage, boxes, wrap }) {
     const target = pinned ?? readStage(boxes.current)
     // reduced motion: follow the page exactly, no easing
     st.s = st.reduce ? target : st.s + (target - st.s) * (1 - Math.exp(-Math.min(dt, 0.1) * 4))
-    // phones only get the drone in the hero; the canvas fades away after it and draws nothing
-    const off = st.mobile && st.s > 0.6
+    // phones and reduced motion only get the drone in the hero: no scroll-driven 3D after it
+    const off = (st.mobile || st.reduce) && st.s > 0.6
     if (off !== st.off) wrap.current.classList.toggle('off', off)
     st.off = off
+
+    if (st.s > end() + 0.02 && target > end()) {
+      idle.current = true
+      wrap.current.style.visibility = 'hidden'
+      setFrameloop('never')
+    }
   })
   return null
 }
 
 export default function Scene() {
   const wrap = useRef()
+  // full sharpness by default; drops to 1x if the device can't hold the frame rate
+  const [dpr, setDpr] = useState(1.25)
   const callouts = useRef([])
-  const stage = useRef({ s: 0, mobile: false, off: false, reduce: false, textRight: 0 })
+  const stage = useRef({ s: 0, mobile: false, off: false, reduce: false, textRight: 0, revRight: 0 })
+  // only draw the drone once its model is known to be there, so a missing file can't take the page down with it
+  const [model, setModel] = useState(false)
+  useEffect(() => {
+    fetch(MODEL_URL, { method: 'HEAD' })
+      .then((r) => setModel(r.ok))
+      .catch(() => setModel(false))
+  }, [])
   const boxes = useSections(stage)
 
   // same queries as the CSS, so the scene and the layout agree on "phone" (a canvas width would miss the scrollbar)
@@ -94,12 +126,13 @@ export default function Scene() {
     <>
       <div className="scene" ref={wrap} aria-hidden="true">
         <Canvas
-          dpr={[1, 1.5]}
+          dpr={[1, dpr]}
           camera={{ position: [0, 0, 6.5], fov: 45 }}
           gl={{ antialias: true, alpha: true, powerPreference: 'high-performance' }}
           eventSource={document.getElementById('root')}
           eventPrefix="client"
         >
+          <PerformanceMonitor onDecline={() => setDpr(1)} />
           <fog attach="fog" args={['#0f2a4a', 6.5, 12]} />
           <hemisphereLight args={['#f3ead8', '#0b2140', 0.7]} />
           <directionalLight position={[3, 5, 4]} intensity={1.6} />
@@ -113,10 +146,11 @@ export default function Scene() {
 
           <Rig stage={stage} boxes={boxes} wrap={wrap} />
           <Tower stage={stage} callouts={callouts} />
-          <Suspense fallback={null}>
-            <Drone stage={stage} callouts={callouts} />
-            <Swarm stage={stage} />
-          </Suspense>
+          {model && (
+            <Suspense fallback={null}>
+              <Drone stage={stage} callouts={callouts} />
+            </Suspense>
+          )}
         </Canvas>
       </div>
       <div className="callouts" aria-hidden="true">

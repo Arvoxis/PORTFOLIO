@@ -34,7 +34,6 @@ export default function Hero() {
         </div>
 
         <div className="hero-foot ld" style={{ '--i': 6 }}>
-          <p className="stamp">{personal.status}</p>
           <dl className="hero-tb" aria-hidden="true">
             <div><dt>Drawn by</dt><dd>R. Sinha</dd></div>
             <div><dt>Subject</dt><dd>Quadcopter, edge AI</dd></div>

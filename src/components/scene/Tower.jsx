@@ -9,11 +9,17 @@ const ARM = 1.15 // cross-arm reach
 const ARMS_Y = [HB * 0.7, HB * 0.9]
 const hw = (y) => lerp(0.62, 0.2, y / HB) // tapering half-width
 
-// Where the tower stands on screen. The drone reads this too, to hover over the tagged insulator.
-export function towerPlace({ width: vw, height: vh, aspect }, mobile) {
-  const narrow = aspect < 1.45
-  const s = (vh * (mobile ? 0.6 : narrow ? 0.62 : 0.7)) / (HB + PEAK)
-  return { x: vw * (mobile ? 0.2 : 0.3), y: -vh * 0.5 + 0.1, s }
+// Where the tower stands on screen. Its near arm, and the drone hovering over it, stay clear of the experience
+// cards (Scene measures their right edge as revRight, in page px); the tower shrinks if it can't fit beside them.
+// The drone reads this too, to hover over the tagged insulator.
+export function towerPlace({ viewport, size }, st) {
+  const { width: vw, height: vh, aspect } = viewport
+  let s = (vh * (st.mobile ? 0.6 : aspect < 1.45 ? 0.62 : 0.7)) / (HB + PEAK)
+  if (st.mobile) return { x: vw * 0.2, y: -vh * 0.5 + 0.1, s }
+  const clear = (st.revRight / size.width - 0.5) * vw + 0.35
+  // near arm tip sits ~0.94 s left of centre, far tip ~1.08 s right, plus ~0.2 for the drone
+  s = Math.min(s, (vw * 0.5 - 0.25 - clear) / 2.22)
+  return { x: Math.max(vw * 0.3, clear + 0.94 * s + 0.2), y: -vh * 0.5 + 0.1, s }
 }
 
 // Lattice members as [x1,y1,z1,x2,y2,z2] pairs, emitted bottom-up so drafting grows from the ground.
@@ -93,6 +99,7 @@ export default function Tower({ stage, callouts }) {
   const brackets = useRef([])
   const hits = useRef(INSULATORS.map(() => 0))
   const card = useRef(null)
+  const lit = useRef(false)
 
   const members = useMemo(lattice, [])
   const memberGeo = useMemo(() => segs(members.flat()), [members])
@@ -163,6 +170,7 @@ export default function Tower({ stage, callouts }) {
     r.visible = vis * dim > 0.01 && !off
     if (!r.visible) {
       if (tag) tag.style.opacity = '0'
+      lit.current = false
       lightCard(false)
       return
     }
@@ -175,7 +183,7 @@ export default function Tower({ stage, callouts }) {
     ceramic.opacity = ss(0.9, 1, draft) * vis * dim
     wireMat.opacity = ss(0.9, 1, draft) * vis * dim * 0.35
 
-    const P = towerPlace(state.viewport, mobile)
+    const P = towerPlace(state, stage.current)
     r.scale.setScalar(P.s)
     r.position.set(P.x, P.y, -0.5)
     r.rotation.y = 0.55 + Math.sin(t * 0.2) * 0.12
@@ -201,7 +209,9 @@ export default function Tower({ stage, callouts }) {
       b.rotation.y = -r.rotation.y // keep boxes facing the camera
       bracketMats[i].opacity = h * vis * dim
     })
-    lightCard(hits.current[TAG] > 0.5 && vis > 0.5)
+    // light it once and hold it while the tower is up, rather than blinking with every scan pass
+    lit.current ||= hits.current[TAG] > 0.5 && vis > 0.5
+    lightCard(lit.current)
 
     r.updateMatrixWorld()
     // tag hangs below the box, clear of the drone above it and of the text to the left

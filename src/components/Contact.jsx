@@ -9,11 +9,10 @@ export default function Contact() {
   // the drawing's title block, doubling as the contact card
   const cells = [
     { k: 'Drawn by', v: p.name, big: true },
-    { k: 'Status', v: p.status, big: true },
+    { k: 'Location', v: p.location },
     { k: 'GitHub', v: p.githubHandle, href: p.github },
     { k: 'LinkedIn', v: p.linkedinHandle, href: p.linkedin },
     { k: 'Medium', v: p.mediumHandle, href: p.medium },
-    { k: 'Location', v: p.location },
   ]
 
   return (
